@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<QCARConfig xsi:noNamespaceSchemaLocation="qcar_config.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Tracking>
+        <ImageTarget name="qrcode_logo_v2" size="270.110931 270"/>
+    </Tracking>
+</QCARConfig>

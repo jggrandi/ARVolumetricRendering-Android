@@ -1,0 +1,2 @@
+LivAR is based on Vuforia SDK.
+//TODO: Improve the licence therms 
