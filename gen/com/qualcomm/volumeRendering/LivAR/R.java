@@ -18,6 +18,7 @@ public final class R {
         public static final int white=0x7f040002;
     }
     public static final class dimen {
+        public static final int LivAR_title=0x7f050004;
         public static final int about_text=0x7f050001;
         public static final int about_title=0x7f050000;
         public static final int splash_subtitle=0x7f050003;
@@ -27,8 +28,11 @@ public final class R {
         public static final int activity_splash_logo=0x7f020000;
         public static final int blueprint_vuforia=0x7f020001;
         public static final int ic_launcher=0x7f020002;
-        public static final int splash_background_tile=0x7f020003;
-        public static final int tiled_background=0x7f020004;
+        public static final int ic_launcher_=0x7f020003;
+        public static final int livar_launcher=0x7f020004;
+        public static final int splash_background_tile=0x7f020005;
+        public static final int tiled_background=0x7f020006;
+        public static final int tst=0x7f020007;
     }
     public static final class id {
         public static final int about_text=0x7f080000;
@@ -36,9 +40,6 @@ public final class R {
         public static final int button_start=0x7f080001;
         public static final int camera_overlay_layout=0x7f080002;
         public static final int loading_indicator=0x7f080003;
-        public static final int splash_screen_subtitle=0x7f080005;
-        public static final int vuforia_logo=0x7f080007;
-        public static final int vuforia_splash_logo=0x7f080006;
     }
     public static final class layout {
         public static final int about_screen=0x7f030000;

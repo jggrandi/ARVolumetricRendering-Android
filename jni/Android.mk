@@ -70,8 +70,9 @@ LOCAL_CFLAGS := -Wno-write-strings -Wno-psabi $(OPENGLES_DEF)
 # module. Use the "-l" prefix in front of the name of libraries you want to
 # link to your module.
 
-LOCAL_LDLIBS := \
-    -llog $(OPENGLES_LIB)
+LOCAL_LDLIBS += -landroid
+
+LOCAL_LDLIBS += -llog $(OPENGLES_LIB) 
 
 # The list of shared libraries this module depends on at runtime.
 # This information is used at link time to embed the corresponding information
@@ -86,7 +87,7 @@ LOCAL_SHARED_LIBRARIES := QCAR-prebuilt
 # compute dependencies automatically for you, just list the source files
 # that will be passed directly to a compiler.
 
-LOCAL_SRC_FILES := ImageTargets.cpp SampleUtils.cpp Texture.cpp
+LOCAL_SRC_FILES := LivAR.cpp SampleUtils.cpp
 
 # By default, ARM target binaries will be generated in 'thumb' mode, where
 # each instruction is 16-bit wide. You can set this variable to 'arm' to

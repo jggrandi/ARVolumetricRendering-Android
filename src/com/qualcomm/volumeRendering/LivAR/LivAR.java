@@ -857,7 +857,8 @@ public class LivAR extends Activity
    static final int CANCEL = 3;
     
     
-    public boolean onTouchEvent(MotionEvent event)
+    @SuppressWarnings("deprecation")
+	public boolean onTouchEvent(MotionEvent event)
     {
         int action = event.getAction();
         int actionType = NONE;
@@ -992,45 +993,8 @@ public class LivAR extends Activity
                         }
                         else if (item == itemAutofocusIndex)
                         {
-                            if (mContAutofocus)
-                            {
-                                // Sets the Focus Mode by calling the native
-                                // method
-                                if (setFocusMode(FOCUS_MODE_NORMAL))
-                                {
-                                    mContAutofocus = false;
-                                }
-                                else
-                                {
-                                    Toast.makeText
-                                    (
-                                        LivAR.this,
-                                        "Unable to deactivate Continuous Auto-Focus",
-                                        Toast.LENGTH_SHORT
-                                    ).show();
-                                }
-                            }
-                            else
-                            {
-                                // Sets the focus mode by calling the native
-                                // method
-                                if (setFocusMode(FOCUS_MODE_CONTINUOUS_AUTO))
-                                {
-                                    mContAutofocus = true;
-                                }
-                                else
-                                {
-                                    Toast.makeText
-                                    (
-                                            LivAR.this,
-                                        "Unable to activate Continuous Auto-Focus",
-                                        Toast.LENGTH_SHORT
-                                    ).show();
-                                }
-                            }
-
-                            // Dismisses the dialog
-                            dialog.dismiss();
+                        	mContAutofocus = false;
+                        	autofocus();
                         }
 
                     }
