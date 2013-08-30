@@ -1,3 +1,4 @@
+
 /*==============================================================================
 Copyright (c) 2010-2013 QUALCOMM Austria Research Center GmbH.
 All Rights Reserved.
@@ -107,8 +108,8 @@ void CalculateFPS() {
     FPS = ((float)(framesPerFPS)) / (timeCounter-prevTime);
     prevTime = timeCounter; } }
 
-
-
+bool frontCamera = true;
+bool cameraChanged=false;
 
 GLuint loadRAWTexture(int inWidth, int inHeight, int inDepth) {
     
@@ -118,7 +119,6 @@ GLuint loadRAWTexture(int inWidth, int inHeight, int inDepth) {
     int height = inHeight;
     int depth = inDepth;
     int widthxheight = width*height;
-    
 
     //allocate memory for the image matrix
     imageData = (short**)malloc((depth) * sizeof(short*));
@@ -486,7 +486,7 @@ Java_com_qualcomm_volumeRendering_LivAR_LivARRenderer_renderFrame(JNIEnv *, jobj
 
     // Get the state from QCAR and mark the beginning of a rendering section
     QCAR::State state = QCAR::Renderer::getInstance().begin();
-    
+
     // Explicitly render the Video Background
     QCAR::Renderer::getInstance().drawVideoBackground();
        
@@ -499,6 +499,7 @@ Java_com_qualcomm_volumeRendering_LivAR_LivARRenderer_renderFrame(JNIEnv *, jobj
     // therefore standard counter clockwise face culling will result in "inside out" models. 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+
     if(QCAR::Renderer::getInstance().getVideoBackgroundConfig().mReflection == QCAR::VIDEO_BACKGROUND_REFLECTION_ON)
         glFrontFace(GL_CW);  //Front camera
     else
@@ -536,9 +537,15 @@ Java_com_qualcomm_volumeRendering_LivAR_LivARRenderer_renderFrame(JNIEnv *, jobj
         else if(touch==1) {glUseProgram(gProgramMediumQualFragShader);  checkGlError("glUseProgram");}
         else if(touch==2) {glUseProgram(gProgramHighQualFragShader);checkGlError("glUseProgram");}
 
-        glUniformMatrix4fv(glGetUniformLocation(gProgramHighQualFragShader, "mvp"), 1, GL_FALSE, (const GLfloat*)&modelViewProjection.data[0]);
-        glUniformMatrix4fv(glGetUniformLocation(gProgramHighQualFragShader, "modelViewInverse"), 1, GL_FALSE, (const GLfloat*)&modelViewInverse.data[0]);
-        glUniform1fv(glGetUniformLocation(gProgramHighQualFragShader, "sliceDistance"), 1, (const GLfloat*) &SPACING );
+        //glUniformMatrix4fv(glGetUniformLocation(gProgramHighQualFragShader, "mvp"), 1, GL_FALSE, (const GLfloat*)&modelViewProjection.data[0]);
+        //glUniformMatrix4fv(glGetUniformLocation(gProgramHighQualFragShader, "modelViewInverse"), 1, GL_FALSE, (const GLfloat*)&modelViewInverse.data[0]);
+        //glUniform1fv(glGetUniformLocation(gProgramHighQualFragShader, "sliceDistance"), 1, (const GLfloat*) &SPACING );
+
+
+        glUniformMatrix4fv(glGetUniformLocation(gProgramLowQualFragShader, "mvp"), 1, GL_FALSE, (const GLfloat*)&modelViewProjection.data[0]);
+        glUniformMatrix4fv(glGetUniformLocation(gProgramLowQualFragShader, "modelViewInverse"), 1, GL_FALSE, (const GLfloat*)&modelViewInverse.data[0]);
+        glUniform1fv(glGetUniformLocation(gProgramLowQualFragShader, "sliceDistance"), 1, (const GLfloat*) &SPACING );
+
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureId);
@@ -786,6 +793,41 @@ Java_com_qualcomm_volumeRendering_LivAR_LivAR_setFocusMode(JNIEnv*, jobject, jin
     return QCAR::CameraDevice::getInstance().setFocusMode(qcarFocusMode) ? JNI_TRUE : JNI_FALSE;
 }
 
+JNIEXPORT jboolean JNICALL
+Java_com_qualcomm_volumeRendering_LivAR_LivAR_switchCameras(JNIEnv*, jobject, jboolean cam)
+{
+    //by Jeronimo
+
+    LOG("Java_com_qualcomm_volumeRendering_LivAR_LivAR_switchCamera");
+    QCAR::CameraDevice::CAMERA camera;
+    if((int)cam==0)
+        camera = QCAR::CameraDevice::CAMERA_BACK;
+    else if ((int)cam==1)    
+        camera = QCAR::CameraDevice::CAMERA_FRONT;
+
+
+    QCAR::CameraDevice::getInstance().stop();
+    
+    QCAR::CameraDevice::getInstance().init(camera);
+
+    configureVideoBackground();
+
+    // Select the default mode:
+    QCAR::CameraDevice::getInstance().selectVideoMode(QCAR::CameraDevice::MODE_DEFAULT);
+        
+
+    // Start the camera:
+    QCAR::CameraDevice::getInstance().start();
+
+    // Start the tracker:
+    QCAR::TrackerManager& trackerManager = QCAR::TrackerManager::getInstance();
+    QCAR::Tracker* imageTracker = trackerManager.getTracker(QCAR::Tracker::IMAGE_TRACKER);
+    if(imageTracker != 0)
+        imageTracker->start();
+
+}
+
+
 
 JNIEXPORT void JNICALL
 Java_com_qualcomm_volumeRendering_LivAR_LivARRenderer_initRendering(
@@ -800,8 +842,11 @@ Java_com_qualcomm_volumeRendering_LivAR_LivARRenderer_initRendering(
     gProgramLowQualFragShader = createProgram(gVertexShader, gLowQualFragShader);
     gProgramMediumQualFragShader = createProgram(gVertexShader, gMediumQualFragShader);
     gProgramHighQualFragShader = createProgram(gVertexShader, gHighQualFragShader);
-    vertexHandle = glGetAttribLocation(gProgramHighQualFragShader,"vertexPos");
-    textureCoordHandle  = glGetAttribLocation(gProgramHighQualFragShader, "texCoord");
+
+    vertexHandle = glGetAttribLocation(gProgramLowQualFragShader,"vertexPos");
+    textureCoordHandle  = glGetAttribLocation(gProgramLowQualFragShader, "texCoord");
+    //vertexHandle = glGetAttribLocation(gProgramHighQualFragShader,"vertexPos");
+    //textureCoordHandle  = glGetAttribLocation(gProgramHighQualFragShader, "texCoord");
 
     if(!gProgramLowQualFragShader){LOG("Could not create LowQ Program");return ;}
     if(!gProgramMediumQualFragShader){LOG("Could not create MedQ Program");return ;}
@@ -811,8 +856,11 @@ Java_com_qualcomm_volumeRendering_LivAR_LivARRenderer_initRendering(
     textureLookUp=createPreintegrationTable (m_lookUpTable);
     textureId=loadRAWTexture(512,512,43); //original
     //textureId=loadRAWTexture(512,512,13); //mod
-    uniformLookUp = glGetUniformLocation(gProgramHighQualFragShader, "lookupTableSampler");
-    uniformId = glGetUniformLocation(gProgramHighQualFragShader, "volumeSampler");
+
+    uniformLookUp = glGetUniformLocation(gProgramLowQualFragShader, "lookupTableSampler");
+    uniformId = glGetUniformLocation(gProgramLowQualFragShader, "volumeSampler");    
+    //uniformLookUp = glGetUniformLocation(gProgramHighQualFragShader, "lookupTableSampler");
+    //uniformId = glGetUniformLocation(gProgramHighQualFragShader, "volumeSampler");
 
     checkGlError("InitRendering");
 

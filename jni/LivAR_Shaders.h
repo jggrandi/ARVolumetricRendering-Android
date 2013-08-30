@@ -3,8 +3,8 @@
 
 ==============================================================================*/
 
-#ifndef _QCAR_CUBE_SHADERS_H_
-#define _QCAR_CUBE_SHADERS_H_
+#ifndef _QCAR_LIVAR_SHADERS_H_
+#define _QCAR_LIVAR_SHADERS_H_
 
 
 static const char gVertexShader[] = 
@@ -160,4 +160,4 @@ static const char gHighQualFragShader[] =
     "}\n";
 
 
-#endif // _QCAR_CUBE_SHADERS_H_
+#endif // _QCAR_LIVAR_SHADERS_H_
