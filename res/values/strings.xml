@@ -17,7 +17,5 @@
     <string name="menu_switch_to_tarmac">Switch to Tarmac</string>
     <string name="menu_switch_to_stone_chips">Switch to Stones &amp; Chips</string>
     <string name="menu_camera_title">Options</string>
-    <string name="menu_frontCamera">Front Camera</string>
-    <string name="menu_backCamera">Back Camera</string>
 
 </resources>

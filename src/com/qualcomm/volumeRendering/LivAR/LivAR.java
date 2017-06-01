@@ -105,9 +105,7 @@ public class LivAR extends Activity
     // Contextual Menu Options for Camera Flash - Autofocus
     private boolean mFlash = false;
     private boolean mContAutofocus = false;
-    private boolean mFrontCamera = false;
-    
-    
+
     // The menu item for swapping data sets:
     MenuItem mDataSetMenuItem = null;
     boolean mIsLivAR_QRCode_SetActive  = false;
@@ -807,8 +805,6 @@ public class LivAR extends Activity
     /** Activates the Flash */
     private native boolean activateFlash(boolean flash);
 
-    /** Switch front and back camera - Jeronimo**/
-    private native boolean switchCameras(boolean cam);
 
 
 
@@ -861,6 +857,7 @@ public class LivAR extends Activity
    static final int CANCEL = 3;
     
     
+    @SuppressWarnings("deprecation")
 	public boolean onTouchEvent(MotionEvent event)
     {
         int action = event.getAction();
@@ -874,7 +871,7 @@ public class LivAR extends Activity
                 break;
             
             case MotionEvent.ACTION_POINTER_DOWN:
-                pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) >> MotionEvent.ACTION_POINTER_ID_SHIFT;
                 actionType = CLICK;
                 break;
             
@@ -887,7 +884,7 @@ public class LivAR extends Activity
                 break;
             
             case MotionEvent.ACTION_POINTER_UP:
-                pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) >> MotionEvent.ACTION_POINTER_ID_SHIFT;
                 actionType = UP;
                 break;
             
@@ -935,14 +932,12 @@ public class LivAR extends Activity
 
         final int itemCameraIndex = 0;
         final int itemAutofocusIndex = 1;
-        final int itemFrontCameraIndex = 2;
-        
+
         AlertDialog cameraOptionsDialog = null;
 
         CharSequence[] items =
         { getString(R.string.menu_flash_on),
-          getString(R.string.menu_contAutofocus_off),
-          getString(R.string.menu_frontCamera)};
+                getString(R.string.menu_contAutofocus_off)};
 
         // Updates list titles according to current state of the options
         if (mFlash)
@@ -961,14 +956,6 @@ public class LivAR extends Activity
         else
         {
             items[itemAutofocusIndex] = (getString(R.string.menu_contAutofocus_on));
-        }
-        if (mFrontCamera)
-        {
-        	items[itemFrontCameraIndex] = (getString(R.string.menu_backCamera)); 
-        }
-        else
-        {
-        	items[itemFrontCameraIndex] = (getString(R.string.menu_frontCamera));
         }
 
 
@@ -1008,13 +995,6 @@ public class LivAR extends Activity
                         {
                         	mContAutofocus = false;
                         	autofocus();
-                        }
-                        else if (item == itemFrontCameraIndex)
-                        {
-                        	if(switchCameras(!mFrontCamera))
-                        	{
-                        		mFrontCamera = !mFrontCamera;
-                        	}
                         }
 
                     }
